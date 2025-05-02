@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import Navbar from '@/components/Navbar'
 
 const categories = [
   { name: 'Software Development', color: 'bg-[#0061FE]' },
@@ -10,17 +11,7 @@ const categories = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
-      {/* Navigation Bar */}
-      <nav className="flex items-center justify-between bg-white rounded-xl mt-6 mx-8 px-8 py-4 shadow-sm">
-        <span className="text-2xl font-medium text-gray-900">Resumeganizer</span>
-        <div className="flex gap-8 text-lg font-normal text-gray-900">
-          <a href="#about" className="hover:underline">About</a>
-          <Link href="/resumes" className="hover:underline">Resumes</Link>
-          <a href="#login" className="hover:underline">Login</a>
-          <a href="#signup" className="hover:underline">Signup</a>
-        </div>
-      </nav>
-
+      <Navbar />
       {/* Hero Section */}
       <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-8 py-12 gap-12">
         {/* Left: Headline and Text */}

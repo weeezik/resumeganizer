@@ -7,6 +7,7 @@ import { collection, onSnapshot, doc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { ResumeCategory } from '@/types'
 import { createCategory, updateCategoryName, deleteCategory } from '@/lib/resumeUtils'
+import Navbar from '@/components/Navbar'
 
 const categoryColors = [
   'bg-[#0061FE]', // Software Development
@@ -93,15 +94,7 @@ export default function ResumesPage() {
   return (
     <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
       {/* Navigation Bar */}
-      <nav className="flex items-center justify-between bg-white rounded-xl mt-6 mx-8 px-8 py-4 shadow-sm">
-        <span className="text-2xl font-medium text-gray-900">Resumeganizer</span>
-        <div className="flex gap-8 text-lg font-normal text-gray-900">
-          <a href="/landing#about" className="hover:underline">About</a>
-          <Link href="/resumes" className="hover:underline">Resumes</Link>
-          <a href="/landing#login" className="hover:underline">Login</a>
-          <a href="/landing#signup" className="hover:underline">Signup</a>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Category Cards */}
       <main className="flex-1 flex flex-col items-center justify-start px-8 py-12">

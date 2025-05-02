@@ -61,6 +61,17 @@ export async function deleteResume(resumeId: string) {
   }
 }
 
+// Category functions
+export async function updateCategoryName(categoryId: string, newName: string) {
+  const categoryRef = doc(db, 'categories', categoryId)
+  await updateDoc(categoryRef, { name: newName, updatedAt: new Date() })
+}
+
+export async function deleteCategory(categoryId: string) {
+  const categoryRef = doc(db, 'categories', categoryId)
+  await deleteDoc(categoryRef)
+}
+
 export async function createCategory(name: string) {
   try {
     const categoryData: Omit<ResumeCategory, 'id'> = {

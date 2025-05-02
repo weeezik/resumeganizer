@@ -1,12 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
+import { collection, onSnapshot, query, orderBy, Firestore } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { createCategory } from '@/lib/resumeUtils'
 import { ResumeCategory } from '@/types'
 import { ResumeList } from '@/components/ResumeList'
 import { UploadResume } from '@/components/UploadResume'
+
+// Type assertion for db
+const firestore: Firestore = db;
 
 export default function Home() {
   const [categories, setCategories] = useState<ResumeCategory[]>([])
@@ -15,15 +18,36 @@ export default function Home() {
   const [newCategoryName, setNewCategoryName] = useState('')
 
   useEffect(() => {
-    // Subscribe to categories collection
-    const q = query(collection(db, 'categories'), orderBy('createdAt', 'desc'))
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const categoriesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as ResumeCategory[]
-      setCategories(categoriesData)
-    })
+    // Subscribe to categories collection without ordering for now
+    const q = query(collection(firestore, 'categories'))
+    
+    console.log('Attempting to connect to Firebase...')
+    
+    const unsubscribe = onSnapshot(q, 
+      (snapshot) => {
+        console.log('Firebase connected successfully!')
+        console.log('Categories found:', snapshot.size)
+        
+        const categoriesData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate(),
+          updatedAt: doc.data().updatedAt?.toDate(),
+        })) as ResumeCategory[]
+        // Sort on the client side instead
+        categoriesData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+        setCategories(categoriesData)
+      },
+      (error) => {
+        console.error('Firebase connection error:', {
+          code: error.code,
+          message: error.message,
+          name: error.name,
+          stack: error.stack,
+        })
+        alert(`Error connecting to database: ${error.message}. Check your Firebase configuration.`)
+      }
+    )
 
     return () => unsubscribe()
   }, [])
@@ -138,11 +162,13 @@ function CategoryCard({
   return (
     <div
       onClick={onClick}
-      className={`p-4 border rounded-lg hover:shadow-md transition-shadow cursor-pointer ${
-        isSelected ? 'border-blue-500 bg-blue-50' : ''
-      }`}
+      className={`p-4 border-2 rounded-lg transition-all cursor-pointer min-h-[56px] flex items-center justify-center
+        ${isSelected ? 'border-blue-500 bg-blue-50 shadow-md text-blue-700' : 'border-gray-400 bg-black text-gray-100 hover:border-blue-300'}
+      `}
     >
-      <h3 className="font-medium">{category.name}</h3>
+      <h3 className="font-medium">
+        {category.name}
+      </h3>
     </div>
   )
 }

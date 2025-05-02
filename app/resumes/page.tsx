@@ -41,7 +41,7 @@ export default function ResumesPage() {
         <span className="text-2xl font-medium text-gray-900">Resumeganizer</span>
         <div className="flex gap-8 text-lg font-normal text-gray-900">
           <a href="/landing#about" className="hover:underline">About</a>
-          <Link href="/resumes" className="hover:underline font-semibold">Resumes</Link>
+          <Link href="/resumes" className="hover:underline">Resumes</Link>
           <a href="/landing#login" className="hover:underline">Login</a>
           <a href="/landing#signup" className="hover:underline">Signup</a>
         </div>

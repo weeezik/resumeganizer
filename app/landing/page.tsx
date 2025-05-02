@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 
 const categories = [
   { name: 'Software Development', color: 'bg-[#0061FE]' },
@@ -14,7 +15,7 @@ export default function LandingPage() {
         <span className="text-2xl font-medium text-gray-900">Resumeganizer</span>
         <div className="flex gap-8 text-lg font-normal text-gray-900">
           <a href="#about" className="hover:underline">About</a>
-          <a href="#resumes" className="hover:underline">Resumes</a>
+          <Link href="/resumes" className="hover:underline">Resumes</Link>
           <a href="#login" className="hover:underline">Login</a>
           <a href="#signup" className="hover:underline">Signup</a>
         </div>

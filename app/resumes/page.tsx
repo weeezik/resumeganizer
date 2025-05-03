@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { collection, onSnapshot, doc } from 'firebase/firestore'
+import { collection, onSnapshot, doc, query, where } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { ResumeCategory } from '@/types'
 import { createCategory, updateCategoryName, deleteCategory } from '@/lib/resumeUtils'
@@ -21,6 +21,8 @@ const categoryColors = [
 
 export default function ResumesPage() {
   const [categories, setCategories] = useState<ResumeCategory[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<ResumeCategory | null>(null)
+  const [resumes, setResumes] = useState<any[]>([])
   const [isAdding, setIsAdding] = useState(false)
   const [newCategory, setNewCategory] = useState('')
   const [loading, setLoading] = useState(false)
@@ -42,8 +44,27 @@ export default function ResumesPage() {
     return () => unsubscribe()
   }, [])
 
+  useEffect(() => {
+    if (selectedCategory) {
+      const q = query(
+        collection(db, 'resumes'),
+        where('categoryId', '==', selectedCategory.id)
+      )
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const resumesData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        setResumes(resumesData)
+      })
+      return () => unsubscribe()
+    } else {
+      setResumes([])
+    }
+  }, [selectedCategory])
+
   const handleCategoryClick = (category: ResumeCategory) => {
-    router.push(`/resumes/${encodeURIComponent(category.name.toLowerCase().replace(/\s+/g, '-'))}`)
+    setSelectedCategory(category)
   }
 
   const handleAddCategory = async (e?: React.FormEvent) => {
@@ -101,134 +122,150 @@ export default function ResumesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
-      {/* Navigation Bar */}
+    <>
       <Navbar />
+      <div className="flex min-h-screen bg-[#F6F5F5]">
+        <aside className="w-72 bg-white border-r shadow-lg flex flex-col">
+          <div className="p-6 font-bold text-2xl">Categories</div>
+          <div className="flex-1 overflow-y-auto px-2">
+            {categories.length === 0 && (
+              <div className="text-center text-gray-500 text-lg">No categories yet.</div>
+            )}
+            {categories.map((cat, i) => {
+              const usedColors = categories.filter(c => c.id !== cat.id).map(c => c.color);
+              const availableColors = categoryColors.filter(color => !usedColors.includes(color) || color === editColor);
 
-      {/* Category Cards */}
-      <main className="flex-1 flex flex-col items-center justify-start px-8 py-12">
-        <div className="w-full max-w-2xl flex flex-col gap-6 mt-8">
-          {categories.length === 0 && (
-            <div className="text-center text-gray-500 text-lg">No categories yet.</div>
-          )}
-          {categories.map((cat, i) => {
-            // Only needed inside the edit form
-            const usedColors = categories.filter(c => c.id !== cat.id).map(c => c.color);
-            const availableColors = categoryColors.filter(color => !usedColors.includes(color) || color === editColor);
-
-            return (
-              <div key={cat.id} className="relative w-full">
-                {editingId === cat.id ? (
-                  <form
-                    onSubmit={e => { e.preventDefault(); handleSaveEdit(cat) }}
-                    className={`w-full flex items-center gap-2 rounded-t-[48px] rounded-b-[48px] bg-white border-2 border-blue-300 py-4 px-8`}
-                  >
-                    <input
-                      type="text"
-                      value={editValue}
-                      onChange={e => setEditValue(e.target.value)}
-                      className="flex-1 bg-transparent outline-none text-xl text-gray-700"
-                      autoFocus
-                      disabled={loading}
-                    />
-                    <div className="flex gap-2">
-                      {availableColors.map(color => (
+              return (
+                <div key={cat.id} className="relative w-full mb-2">
+                  {editingId === cat.id ? (
+                    <form
+                      onSubmit={e => { e.preventDefault(); handleSaveEdit(cat) }}
+                      className={`w-full flex items-center gap-2 rounded-t-[48px] rounded-b-[48px] bg-white border-2 border-blue-300 py-4 px-8`}
+                    >
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={e => setEditValue(e.target.value)}
+                        className="flex-1 bg-transparent outline-none text-xl text-gray-700"
+                        autoFocus
+                        disabled={loading}
+                      />
+                      <div className="flex gap-2">
+                        {availableColors.map(color => (
+                          <button
+                            key={color}
+                            type="button"
+                            className={`w-8 h-8 rounded-full border-2 ${editColor === color ? 'border-black' : 'border-gray-300'}`}
+                            style={{ backgroundColor: color }}
+                            onClick={() => setEditColor(color)}
+                            aria-label={`Select color ${color}`}
+                          />
+                        ))}
+                      </div>
+                      <button
+                        type="button"
+                        className="text-gray-500 px-3 py-1 rounded hover:text-gray-700"
+                        onClick={() => setEditingId(null)}
+                        disabled={loading}
+                      >Cancel</button>
+                      <button
+                        type="submit"
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+                        disabled={loading}
+                      >Save</button>
+                    </form>
+                  ) : (
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      className={`w-full rounded-t-[48px] rounded-b-[48px] text-white text-2xl font-medium py-6 px-8 shadow-lg transition-transform hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-between ${
+                        selectedCategory?.id === cat.id ? 'ring-2 ring-blue-500' : ''
+                      }`}
+                      style={{ backgroundColor: cat.color, zIndex: categories.length - i }}
+                      onClick={() => handleCategoryClick(cat)}
+                      onKeyPress={e => { if (e.key === 'Enter') handleCategoryClick(cat) }}
+                    >
+                      <span>{cat.name}</span>
+                      <span className="flex gap-2 ml-4">
                         <button
-                          key={color}
                           type="button"
-                          className={`w-8 h-8 rounded-full border-2 ${editColor === color ? 'border-black' : 'border-gray-300'}`}
-                          style={{ backgroundColor: color }}
-                          onClick={() => setEditColor(color)}
-                          aria-label={`Select color ${color}`}
-                        />
-                      ))}
+                          className="text-white/80 hover:text-white"
+                          onClick={e => { e.stopPropagation(); handleEditCategory(cat) }}
+                        >Edit</button>
+                        <button
+                          type="button"
+                          className="text-white/80 hover:text-red-200"
+                          onClick={e => { e.stopPropagation(); handleDeleteCategory(cat) }}
+                        >Delete</button>
+                      </span>
                     </div>
-                    <button
-                      type="button"
-                      className="text-gray-500 px-3 py-1 rounded hover:text-gray-700"
-                      onClick={() => setEditingId(null)}
-                      disabled={loading}
-                    >Cancel</button>
-                    <button
-                      type="submit"
-                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-                      disabled={loading}
-                    >Save</button>
-                  </form>
-                ) : (
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    className="w-full rounded-t-[48px] rounded-b-[48px] text-white text-2xl font-medium py-6 px-8 shadow-lg transition-transform hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-between"
-                    style={{ backgroundColor: cat.color, zIndex: categories.length - i }}
-                    onClick={() => handleCategoryClick(cat)}
-                    onKeyPress={e => { if (e.key === 'Enter') handleCategoryClick(cat) }}
-                  >
-                    <span>{cat.name}</span>
-                    <span className="flex gap-2 ml-4">
-                      <button
-                        type="button"
-                        className="text-white/80 hover:text-white"
-                        onClick={e => { e.stopPropagation(); handleEditCategory(cat) }}
-                      >Edit</button>
-                      <button
-                        type="button"
-                        className="text-white/80 hover:text-red-200"
-                        onClick={e => { e.stopPropagation(); handleDeleteCategory(cat) }}
-                      >Delete</button>
-                    </span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          {isAdding ? (
-            <form onSubmit={handleAddCategory} className="w-full flex flex-col md:flex-row items-center gap-2 rounded-t-[48px] rounded-b-[48px] bg-white border-2 border-dashed border-gray-300 py-4 px-8 mt-2">
-              <div className="flex flex-1 flex-col md:flex-row items-center gap-2 w-full">
-                <input
-                  type="text"
-                  value={newCategory}
-                  onChange={e => setNewCategory(e.target.value)}
-                  placeholder="Category name"
-                  className="flex-1 bg-transparent outline-none text-xl text-gray-700"
-                  autoFocus
-                  disabled={loading}
-                />
-                <div className="flex gap-2">
-                  {categoryColors.map(color => (
-                    <button
-                      key={color}
-                      type="button"
-                      className={`w-8 h-8 rounded-full border-2 ${selectedColor === color ? 'border-black' : 'border-gray-300'}`}
-                      style={{ backgroundColor: color }}
-                      onClick={() => setSelectedColor(color)}
-                      aria-label={`Select color ${color}`}
-                    />
-                  ))}
+                  )}
                 </div>
-                <button
-                  type="button"
-                  className="text-gray-500 px-3 py-1 rounded hover:text-gray-700"
-                  onClick={() => { setIsAdding(false); setNewCategory('') }}
-                  disabled={loading}
-                >Cancel</button>
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-                  disabled={loading}
-                >{loading ? 'Adding...' : 'Add'}</button>
+              );
+            })}
+            {isAdding ? (
+              <form onSubmit={handleAddCategory} className="w-full flex flex-col md:flex-row items-center gap-2 rounded-t-[48px] rounded-b-[48px] bg-white border-2 border-dashed border-gray-300 py-4 px-8 mt-2">
+                <div className="flex flex-1 flex-col md:flex-row items-center gap-2 w-full">
+                  <input
+                    type="text"
+                    value={newCategory}
+                    onChange={e => setNewCategory(e.target.value)}
+                    placeholder="Category name"
+                    className="flex-1 bg-transparent outline-none text-xl text-gray-700"
+                    autoFocus
+                    disabled={loading}
+                  />
+                  <div className="flex gap-2">
+                    {categoryColors.map(color => (
+                      <button
+                        key={color}
+                        type="button"
+                        className={`w-8 h-8 rounded-full border-2 ${selectedColor === color ? 'border-black' : 'border-gray-300'}`}
+                        style={{ backgroundColor: color }}
+                        onClick={() => setSelectedColor(color)}
+                        aria-label={`Select color ${color}`}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    className="text-gray-500 px-3 py-1 rounded hover:text-gray-700"
+                    onClick={() => { setIsAdding(false); setNewCategory('') }}
+                    disabled={loading}
+                  >Cancel</button>
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+                    disabled={loading}
+                  >{loading ? 'Adding...' : 'Add'}</button>
+                </div>
+              </form>
+            ) : (
+              <button
+                className="w-full rounded-t-[48px] rounded-b-[48px] bg-white text-gray-700 text-2xl font-medium py-6 px-8 border-2 border-dashed border-gray-300 mt-2 hover:bg-gray-50 transition"
+                onClick={() => setIsAdding(true)}
+              >
+                Add a Resume Category
+              </button>
+            )}
+          </div>
+        </aside>
+        <main className="flex-1 flex flex-col items-center justify-start px-8 py-12">
+          <div className="w-full max-w-4xl flex flex-col gap-6 mt-8">
+            {selectedCategory ? (
+              <iframe
+                src={`/resumes/${encodeURIComponent(selectedCategory.name.toLowerCase().replace(/\s+/g, '-'))}`}
+                className="w-full h-full min-h-[calc(100vh-4rem)] border-0"
+                title={`Resumes for ${selectedCategory.name}`}
+              />
+            ) : (
+              <div className="text-center text-gray-500 text-lg">
+                Select a category to view its resumes
               </div>
-            </form>
-          ) : (
-            <button
-              className="w-full rounded-t-[48px] rounded-b-[48px] bg-white text-gray-700 text-2xl font-medium py-6 px-8 border-2 border-dashed border-gray-300 mt-2 hover:bg-gray-50 transition"
-              onClick={() => setIsAdding(true)}
-            >
-              Add a Resume Category
-            </button>
-          )}
-        </div>
-      </main>
-    </div>
+            )}
+          </div>
+        </main>
+      </div>
+    </>
   )
 } 

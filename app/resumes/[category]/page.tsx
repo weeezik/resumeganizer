@@ -10,7 +10,6 @@ import { ResumeList } from '@/components/ResumeList'
 import Link from 'next/link'
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { updateResumeDetails, deleteResume } from '@/lib/resumeUtils'
-import Navbar from '@/components/Navbar'
 
 export default function CategoryPage() {
   const params = useParams()
@@ -127,9 +126,6 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
-      {/* Navigation Bar */}
-      <Navbar />
-
       {/* Main Content Box */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-br from-[#f6f8fc] to-[#e9ecf3]">
         <div

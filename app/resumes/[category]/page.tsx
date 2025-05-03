@@ -9,7 +9,7 @@ import { UploadResume } from '@/components/UploadResume'
 import { ResumeList } from '@/components/ResumeList'
 import Link from 'next/link'
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
-import { updateResumeDetails, deleteResume } from '@/lib/resumeUtils'
+import { updateResumeDetails, deleteResume, createResume } from '@/lib/resumeUtils'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import RequireAuth from '@/components/RequireAuth'
@@ -58,6 +58,7 @@ export default function CategoryPage() {
     const q = query(
       collection(db, 'resumes'),
       where('category', '==', categoryName),
+      where('userId', '==', user.uid),
       orderBy('updatedAt', 'desc')
     )
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -70,7 +71,7 @@ export default function CategoryPage() {
       setResumes(resumesData)
     })
     return () => unsubscribe()
-  }, [categoryName])
+  }, [categoryName, user.uid])
 
   useEffect(() => {
     if (!categoryName) return;

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { collection, onSnapshot, doc } from 'firebase/firestore'
+import { collection, onSnapshot, doc, query, where } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { ResumeCategory } from '@/types'
 import { createCategory, updateCategoryName, deleteCategory } from '@/lib/resumeUtils'
@@ -40,7 +40,12 @@ export default function ResumesPage() {
   }, [user, router])
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'categories'), (snapshot) => {
+    if (!user) return
+    const q = query(
+      collection(db, 'categories'),
+      where('userId', '==', user.uid)
+    )
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const categoriesData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
@@ -48,7 +53,7 @@ export default function ResumesPage() {
       setCategories(categoriesData)
     })
     return () => unsubscribe()
-  }, [])
+  }, [user])
 
   const handleCategoryClick = (category: ResumeCategory) => {
     router.push(`/resumes/${encodeURIComponent(category.name.toLowerCase().replace(/\s+/g, '-'))}`)
@@ -61,9 +66,10 @@ export default function ResumesPage() {
       alert('Please enter a name and select a color.');
       return;
     }
+    if (!user) return;
     setLoading(true)
     try {
-      await createCategory(trimmed, selectedColor)
+      await createCategory(trimmed, selectedColor, user.uid)
       setNewCategory('')
       setIsAdding(false)
     } catch (err) {

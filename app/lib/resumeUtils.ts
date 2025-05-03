@@ -79,11 +79,12 @@ export async function deleteCategory(categoryId: string) {
   await deleteDoc(categoryRef)
 }
 
-export async function createCategory(name: string, color: string) {
+export async function createCategory(name: string, color: string, userId: string) {
   try {
     const categoryData: Omit<ResumeCategory, 'id'> = {
       name,
       color,
+      userId,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
@@ -98,4 +99,13 @@ export async function createCategory(name: string, color: string) {
     console.error('Error creating category:', error)
     throw error
   }
+}
+
+export async function createResume(data: Resume, userId: string) {
+  return addDoc(collection(db, 'resumes'), {
+    ...data,
+    userId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  })
 } 

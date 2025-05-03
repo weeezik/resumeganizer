@@ -18,6 +18,7 @@ export interface ResumeCategory {
   id: string
   name: string
   color: string
+  userId: string
   createdAt: Date
   updatedAt: Date
 } 

@@ -25,6 +25,7 @@ export default function CategoryPage() {
     notes: '',
   })
   const [loading, setLoading] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
   // Convert slug to display name (e.g., software-development -> Software Development)
   useEffect(() => {
@@ -102,6 +103,8 @@ export default function CategoryPage() {
       setLoading(false)
     }
   }
+
+  const previewedResume = resumes.find(r => r.fileUrl === previewUrl);
 
   return (
     <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
@@ -182,6 +185,12 @@ export default function CategoryPage() {
                       >
                         <TrashIcon className="w-4 h-4" /> Delete
                       </button>
+                      <button
+                        className="flex items-center gap-1 px-2 py-1 text-green-600 hover:text-green-800 text-sm rounded transition"
+                        onClick={() => setPreviewUrl(resume.fileUrl)}
+                      >
+                        Preview
+                      </button>
                     </div>
                   </>
                 )}
@@ -194,6 +203,40 @@ export default function CategoryPage() {
           </div>
         </div>
       </main>
+
+      {previewUrl && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-col">
+                <span className="font-semibold text-gray-900">
+                  {previewedResume?.company || '-'}
+                </span>
+                <span className="text-gray-700 text-sm">
+                  {previewedResume?.jobTitle || '-'}
+                </span>
+                <span className="text-gray-500 text-xs">
+                  Updated: {previewedResume?.updatedAt ? previewedResume.updatedAt.toLocaleDateString() : '-'}
+                </span>
+              </div>
+              <button
+                className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700"
+                onClick={() => setPreviewUrl(null)}
+              >
+                Close
+              </button>
+            </div>
+            <iframe
+              src={previewUrl.endsWith('.pdf')
+                ? previewUrl
+                : `https://docs.google.com/gview?url=${encodeURIComponent(previewUrl)}&embedded=true`}
+              title="Document Preview"
+              className="flex-1 w-full rounded"
+              style={{ minHeight: '60vh' }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

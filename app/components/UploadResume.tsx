@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useAuth } from '@/context/AuthContext'
 import { uploadResume } from '@/lib/resumeUtils'
 
 export function UploadResume({ categoryId }: { categoryId: string }) {
+  const { user } = useAuth()
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -40,7 +42,8 @@ export function UploadResume({ categoryId }: { categoryId: string }) {
     
     try {
       for (const file of files) {
-        await uploadResume(file, categoryId)
+        if (!user) return
+        await uploadResume(file, categoryId, user.uid)
       }
     } catch (error) {
       console.error('Error uploading files:', error)

@@ -184,7 +184,7 @@ export default function ResumesPage() {
           })}
           {isAdding ? (
             <form onSubmit={handleAddCategory} className="w-full flex flex-col md:flex-row items-center gap-2 rounded-t-[48px] rounded-b-[48px] bg-white border-2 border-dashed border-gray-300 py-4 px-8 mt-2">
-              <div className="flex-1 flex flex-col md:flex-row items-center gap-2">
+              <div className="flex flex-1 flex-col md:flex-row items-center gap-2 w-full">
                 <input
                   type="text"
                   value={newCategory}
@@ -206,18 +206,18 @@ export default function ResumesPage() {
                     />
                   ))}
                 </div>
+                <button
+                  type="button"
+                  className="text-gray-500 px-3 py-1 rounded hover:text-gray-700"
+                  onClick={() => { setIsAdding(false); setNewCategory('') }}
+                  disabled={loading}
+                >Cancel</button>
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+                  disabled={loading}
+                >{loading ? 'Adding...' : 'Add'}</button>
               </div>
-              <button
-                type="button"
-                className="text-gray-500 px-3 py-1 rounded hover:text-gray-700"
-                onClick={() => { setIsAdding(false); setNewCategory('') }}
-                disabled={loading}
-              >Cancel</button>
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-                disabled={loading}
-              >{loading ? 'Adding...' : 'Add'}</button>
             </form>
           ) : (
             <button

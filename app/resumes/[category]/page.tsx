@@ -26,6 +26,7 @@ export default function CategoryPage() {
   })
   const [loading, setLoading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [categoryColor, setCategoryColor] = useState('#0061FE')
 
   // Convert slug to display name (e.g., software-development -> Software Development)
   useEffect(() => {
@@ -58,6 +59,24 @@ export default function CategoryPage() {
     })
     return () => unsubscribe()
   }, [categoryName])
+
+  useEffect(() => {
+    if (!categoryName) return;
+    // Fetch the category color from Firestore
+    const q = query(
+      collection(db, 'categories'),
+      where('name', '==', categoryName)
+    );
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        const data = snapshot.docs[0].data();
+        setCategoryColor(data.color || '#0061FE');
+      }
+    });
+    return () => unsubscribe();
+  }, [categoryName]);
+
+  const accentColor = categoryColor;
 
   const handleEdit = (resume: Resume) => {
     setEditingId(resume.id)
@@ -113,9 +132,9 @@ export default function CategoryPage() {
 
       {/* Main Content Box */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-        <div className="w-full max-w-5xl bg-white rounded-[48px] border-4 border-[#0061FE] p-8 md:p-12 flex flex-col items-center shadow-lg">
+        <div className="w-full max-w-5xl bg-white rounded-[48px] border-4" style={{ borderColor: accentColor }}>
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 text-gray-900">{categoryName}</h2>
-          <div className="w-full border-b-2 border-[#0061FE] mb-8"></div>
+          <div className="w-full border-b-2" style={{ borderColor: accentColor }}></div>
           {/* Resume Grid */}
           <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 items-stretch">
             {resumes.map((resume) => (

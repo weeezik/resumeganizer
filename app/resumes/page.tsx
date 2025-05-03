@@ -198,7 +198,10 @@ export default function ResumesPage() {
               );
             })}
             {isAdding ? (
-              <form onSubmit={handleAddCategory} className="w-full flex flex-col md:flex-row items-center gap-2 rounded-t-[48px] rounded-b-[48px] bg-white border-2 border-dashed border-gray-300 py-4 px-8 mt-2">
+              <form
+                onSubmit={handleAddCategory}
+                className="w-full flex flex-col md:flex-row items-center gap-2 rounded-t-[48px] rounded-b-[48px] bg-white border-2 border-dashed border-gray-300 py-4 px-8 mt-2"
+              >
                 <div className="flex flex-1 flex-col md:flex-row items-center gap-2 w-full">
                   <input
                     type="text"

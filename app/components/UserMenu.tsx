@@ -17,12 +17,6 @@ export default function UserMenu() {
       <Link href="/account" aria-label="Account">
         <UserCircleIcon className="w-7 h-7 text-gray-400 hover:text-blue-500 transition" />
       </Link>
-      <button
-        onClick={() => signOut(auth)}
-        className="ml-4 text-red-600 hover:underline text-sm"
-      >
-        Logout
-      </button>
     </div>
   )
 }

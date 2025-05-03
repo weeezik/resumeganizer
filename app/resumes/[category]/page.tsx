@@ -8,7 +8,7 @@ import { Resume } from '@/types'
 import { UploadResume } from '@/components/UploadResume'
 import { ResumeList } from '@/components/ResumeList'
 import Link from 'next/link'
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { PencilIcon, TrashIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { updateResumeDetails, deleteResume, createResume, uploadResume } from '@/lib/resumeUtils'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
@@ -141,6 +141,15 @@ export default function CategoryPage() {
   return (
     <RequireAuth>
       <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
+        {/* Back Button */}
+        <button
+          onClick={() => router.push('/resumes')}
+          className="flex items-center gap-2 self-start ml-8 mt-6 text-gray-600 hover:text-blue-600 transition group"
+          aria-label="Back to categories"
+        >
+          <ArrowLeftIcon className="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-200" />
+          <span className="font-medium">Back</span>
+        </button>
         {/* Main Content Box */}
         <main className="flex-1 flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-br from-[#f6f8fc] to-[#e9ecf3]">
           <div

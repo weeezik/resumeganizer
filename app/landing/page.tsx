@@ -11,7 +11,6 @@ const categories = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
-      <Navbar />
       {/* Hero Section */}
       <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-8 py-12 gap-12">
         {/* Left: Headline and Text */}

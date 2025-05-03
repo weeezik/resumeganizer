@@ -6,7 +6,7 @@ export default function Navbar() {
       <Link href="/landing" className="text-2xl font-medium text-gray-900 hover:underline">Resumeganizer</Link>
       <div className="flex gap-8 text-lg font-normal text-gray-900">
         <Link href="/resumes" className="hover:underline">Resumes</Link>
-        <Link href="/landing#auth" className="hover:underline">Login/Signup</Link>
+        <Link href="/auth" className="hover:underline">Login/Signup</Link>
       </div>
     </nav>
   );

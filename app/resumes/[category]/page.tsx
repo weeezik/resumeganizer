@@ -127,9 +127,6 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
-      {/* Navigation Bar */}
-      <Navbar />
-
       {/* Main Content Box */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-br from-[#f6f8fc] to-[#e9ecf3]">
         <div

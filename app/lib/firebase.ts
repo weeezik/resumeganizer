@@ -1,6 +1,7 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
 import { getStorage, FirebaseStorage } from 'firebase/storage'
 import { getFirestore, enableIndexedDbPersistence, Firestore } from 'firebase/firestore'
+import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -49,6 +50,8 @@ try {
       console.warn('The current browser does not support persistence.');
     }
   });
+
+  
 } catch (error: any) {
   console.error('Firebase initialization error:', error);
   console.error('Error details:', {
@@ -59,5 +62,5 @@ try {
   });
   throw error;
 }
-
+export const auth = getAuth(app);
 export { app, storage, db } 

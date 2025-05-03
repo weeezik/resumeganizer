@@ -102,8 +102,6 @@ export default function ResumesPage() {
 
   return (
     <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
-      {/* Navigation Bar */}
-      <Navbar />
 
       {/* Category Cards */}
       <main className="flex-1 flex flex-col items-center justify-start px-8 py-12">

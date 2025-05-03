@@ -4,6 +4,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'fire
 import { auth } from '@/lib/firebase'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
+import ErrorModal from '@/components/ErrorModal'
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
@@ -11,6 +12,7 @@ export default function AuthPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [modal, setModal] = useState<{ message: string, action?: () => void, actionLabel?: string } | null>(null)
   const router = useRouter()
   const { user } = useAuth()
 
@@ -33,7 +35,37 @@ export default function AuthPage() {
       }
       router.replace('/resumes')
     } catch (err: any) {
-      setError(err.message)
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+        setModal({
+          message: "No account found with this email. Would you like to sign up?",
+          action: () => {
+            setIsLogin(false)
+            setModal(null)
+          },
+          actionLabel: "Sign up"
+        })
+      } else if (err.code === 'auth/wrong-password') {
+        setModal({
+          message: "Incorrect password. Please try again or reset your password.",
+          action: undefined,
+          actionLabel: ""
+        })
+      } else if (err.code === 'auth/email-already-in-use') {
+        setModal({
+          message: "This email is already registered. Please log in instead.",
+          action: () => {
+            setIsLogin(true)
+            setModal(null)
+          },
+          actionLabel: "Login"
+        })
+      } else {
+        setModal({
+          message: `Error doesn't fit any criteria: ${err.message}`,
+          action: undefined,
+          actionLabel: ""
+        })
+      }
     } finally {
       setLoading(false)
     }
@@ -90,6 +122,14 @@ export default function AuthPage() {
           )}
         </div>
       </div>
+      {modal && (
+        <ErrorModal
+          message={modal.message}
+          onClose={() => setModal(null)}
+          actionLabel={modal.actionLabel}
+          onAction={modal.action}
+        />
+      )}
     </div>
   )
 }

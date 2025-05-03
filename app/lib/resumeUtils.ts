@@ -10,7 +10,7 @@ const categoryColors = [
   '#00FE1E', // Master
 ];
 
-export async function uploadResume(file: File, category: string) {
+export async function uploadResume(file: File, category: string, userId: string) {
   try {
     // Create a reference to the file in Firebase Storage
     const storageRef = ref(storage, `resumes/${category}/${file.name}`)
@@ -27,6 +27,7 @@ export async function uploadResume(file: File, category: string) {
       fileUrl: downloadURL,
       category,
       status: 'not applied',
+      userId,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

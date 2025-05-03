@@ -3,6 +3,7 @@ export interface Resume {
   fileName: string
   fileUrl: string
   category: string
+  userId: string
   company?: string
   jobTitle?: string
   date?: string

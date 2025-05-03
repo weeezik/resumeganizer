@@ -19,9 +19,15 @@ export default function LandingPage() {
           <h1 className="text-5xl md:text-6xl font-light mb-6 leading-tight text-gray-900">
             An online file cabinet<br />for your resumes.
           </h1>
-          <p className="text-xl text-gray-800">
+          <p className="text-xl text-gray-800 mb-8">
             Resumeganizer helps job seekers organize and track different versions of their resume when applying to multiple roles. An online file cabinet for your resumes. Keep every version organized and in one place.
           </p>
+          <a
+            href="/resumes"
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg transition mb-8"
+          >
+            Get Started
+          </a>
         </div>
         {/* Right: Category Pills */}
         <div className="flex flex-col gap-6 items-end w-full max-w-md">

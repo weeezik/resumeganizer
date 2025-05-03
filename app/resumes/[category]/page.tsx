@@ -131,14 +131,23 @@ export default function CategoryPage() {
       <Navbar />
 
       {/* Main Content Box */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-        <div className="w-full max-w-5xl bg-white rounded-[48px] border-4" style={{ borderColor: accentColor }}>
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 text-gray-900">{categoryName}</h2>
-          <div className="w-full border-b-2" style={{ borderColor: accentColor }}></div>
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12 bg-gradient-to-br from-[#f6f8fc] to-[#e9ecf3]">
+        <div
+          className="w-full max-w-5xl bg-white rounded-3xl border-2 shadow-xl p-8 md:p-12 flex flex-col items-center"
+          style={{ borderColor: accentColor }}
+        >
+          <h2 className="text-4xl font-extrabold text-center mb-6 text-gray-900 tracking-tight" style={{ letterSpacing: '-0.01em' }}>
+            {categoryName}
+          </h2>
+          <div className="w-full border-b-2 mb-8" style={{ borderColor: accentColor }}></div>
           {/* Resume Grid */}
           <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 items-stretch">
             {resumes.map((resume) => (
-              <div key={resume.id} className="bg-gray-100 rounded-xl p-4 flex flex-col shadow h-full">
+              <div
+                key={resume.id}
+                className="bg-gray-50 rounded-2xl p-6 flex flex-col shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg border-t-4"
+                style={{ borderTopColor: accentColor }}
+              >
                 {editingId === resume.id ? (
                   <form onSubmit={e => { e.preventDefault(); handleEditSave(resume) }} className="flex flex-col gap-2">
                     <input
@@ -216,7 +225,10 @@ export default function CategoryPage() {
               </div>
             ))}
             {/* Upload Card */}
-            <div className="flex flex-col items-center justify-center border border-gray-400 bg-white rounded-xl p-8 min-h-[200px] min-w-[200px] shadow cursor-pointer hover:border-blue-400 transition">
+            <div
+              className="flex flex-col items-center justify-center border-2 border-dashed bg-white rounded-2xl p-8 min-h-[220px] min-w-[220px] shadow-md transition cursor-pointer hover:border-blue-400"
+              style={{ borderColor: accentColor }}
+            >
               <UploadResume categoryId={categoryName} />
             </div>
           </div>

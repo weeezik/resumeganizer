@@ -17,6 +17,7 @@ export type ResumeStatus = 'applied' | 'interviewed' | 'not applied'
 export interface ResumeCategory {
   id: string
   name: string
+  color: string
   createdAt: Date
   updatedAt: Date
 } 

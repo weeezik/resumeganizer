@@ -3,6 +3,13 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { collection, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
 import { Resume, ResumeCategory } from '../types'
 
+const categoryColors = [
+  '#0061FE', // Software Development
+  '#F000F0', // Project Management
+  '#FE9D00', // Hostel/Farm Work
+  '#00FE1E', // Master
+];
+
 export async function uploadResume(file: File, category: string) {
   try {
     // Create a reference to the file in Firebase Storage
@@ -74,8 +81,10 @@ export async function deleteCategory(categoryId: string) {
 
 export async function createCategory(name: string) {
   try {
+    const color = categoryColors[Math.floor(Math.random() * categoryColors.length)];
     const categoryData: Omit<ResumeCategory, 'id'> = {
       name,
+      color,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

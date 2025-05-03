@@ -69,9 +69,9 @@ export async function deleteResume(resumeId: string) {
 }
 
 // Category functions
-export async function updateCategoryName(categoryId: string, newName: string) {
-  const categoryRef = doc(db, 'categories', categoryId)
-  await updateDoc(categoryRef, { name: newName, updatedAt: new Date() })
+export async function updateCategoryName(categoryId: string, newName: string, color: string) {
+  const categoryRef = doc(db, 'categories', categoryId);
+  await updateDoc(categoryRef, { name: newName, color, updatedAt: new Date() });
 }
 
 export async function deleteCategory(categoryId: string) {

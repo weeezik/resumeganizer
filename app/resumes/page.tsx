@@ -13,7 +13,10 @@ const categoryColors = [
   'bg-[#0061FE]', // Software Development
   'bg-[#F000F0]', // Project Management
   'bg-[#FE9D00]', // Hostel/Farm Work
-  'bg-[#00FE1E]', // Master
+  'bg-[#00FE1E]', // Master's Degree
+  'bg-[#cd9552]', // Bachelor's Degree
+  'bg-[#e8a827]', // High School Diploma
+  'bg-[##33e1b2]', // Other
 ]
 
 export default function ResumesPage() {
@@ -24,6 +27,7 @@ export default function ResumesPage() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [selectedColor, setSelectedColor] = useState<string>('');
   const router = useRouter()
 
   useEffect(() => {
@@ -44,10 +48,13 @@ export default function ResumesPage() {
   const handleAddCategory = async (e?: React.FormEvent) => {
     e?.preventDefault()
     const trimmed = newCategory.trim()
-    if (!trimmed) return
+    if (!trimmed || !selectedColor) {
+      alert('Please enter a name and select a color.');
+      return;
+    }
     setLoading(true)
     try {
-      await createCategory(trimmed)
+      await createCategory(trimmed, selectedColor)
       setNewCategory('')
       setIsAdding(false)
     } catch (err) {
@@ -90,6 +97,10 @@ export default function ResumesPage() {
       setLoading(false)
     }
   }
+
+  // Get used colors
+  const usedColors = categories.map(cat => cat.color);
+  const availableColors = categoryColors.filter(color => !usedColors.includes(color));
 
   return (
     <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
@@ -166,6 +177,18 @@ export default function ResumesPage() {
                 autoFocus
                 disabled={loading}
               />
+              <div className="flex gap-2 mb-2">
+                {availableColors.map(color => (
+                  <button
+                    key={color}
+                    type="button"
+                    className={`w-8 h-8 rounded-full border-2 ${selectedColor === color ? 'border-black' : 'border-gray-300'}`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setSelectedColor(color)}
+                    aria-label={`Select color ${color}`}
+                  />
+                ))}
+              </div>
               <button
                 type="button"
                 className="text-gray-500 px-3 py-1 rounded hover:text-gray-700"

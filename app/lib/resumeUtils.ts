@@ -79,9 +79,8 @@ export async function deleteCategory(categoryId: string) {
   await deleteDoc(categoryRef)
 }
 
-export async function createCategory(name: string) {
+export async function createCategory(name: string, color: string) {
   try {
-    const color = categoryColors[Math.floor(Math.random() * categoryColors.length)];
     const categoryData: Omit<ResumeCategory, 'id'> = {
       name,
       color,

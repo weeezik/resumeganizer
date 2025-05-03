@@ -117,9 +117,9 @@ export default function CategoryPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 text-gray-900">{categoryName}</h2>
           <div className="w-full border-b-2 border-[#0061FE] mb-8"></div>
           {/* Resume Grid */}
-          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 items-stretch">
             {resumes.map((resume) => (
-              <div key={resume.id} className="bg-gray-100 rounded-xl p-4 flex flex-col gap-2 shadow">
+              <div key={resume.id} className="bg-gray-100 rounded-xl p-4 flex flex-col shadow h-full">
                 {editingId === resume.id ? (
                   <form onSubmit={e => { e.preventDefault(); handleEditSave(resume) }} className="flex flex-col gap-2">
                     <input
@@ -159,7 +159,7 @@ export default function CategoryPage() {
                       rows={2}
                       disabled={loading}
                     />
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex gap-2 mt-auto pt-2">
                       <button type="button" className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700" onClick={handleEditCancel} disabled={loading}>Cancel</button>
                       <button type="submit" className="px-2 py-1 rounded bg-blue-500 hover:bg-blue-600 text-white" disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
                     </div>
@@ -172,7 +172,7 @@ export default function CategoryPage() {
                     <div className="text-base text-gray-800">Updated: <span className="font-normal">{resume.updatedAt ? resume.updatedAt.toLocaleDateString() : '-'}</span></div>
                     <div className="text-base text-gray-800">Notes: <span className="font-normal">{resume.notes || '-'}</span></div>
                     <div className="text-base text-gray-800">Status: <span className="font-normal">{resume.status || '-'}</span></div>
-                    <div className="flex gap-2 mt-2">
+                    <div className="flex gap-2 mt-auto pt-2">
                       <button
                         className="flex items-center gap-1 px-2 py-1 text-blue-600 hover:text-blue-800 text-sm rounded transition"
                         onClick={() => handleEdit(resume)}

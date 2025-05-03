@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar'
 const categories = [
   { name: 'Software Development', color: 'bg-[#0061FE]' },
   { name: 'Project Management', color: 'bg-[#F000F0]' },
-  { name: 'Hostel/Farm Work', color: 'bg-[#FE9D00]' },
+  { name: 'Agriculture and Farm Work', color: 'bg-[#FE9D00]' },
 ]
 
 export default function LandingPage() {

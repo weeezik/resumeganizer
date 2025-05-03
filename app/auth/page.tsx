@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { useRouter } from 'next/navigation'
@@ -15,10 +15,11 @@ export default function AuthPage() {
   const { user } = useAuth()
 
   // Redirect if already logged in
-  if (user) {
-    router.replace('/resumes')
-    return null
-  }
+  useEffect(() => {
+    if (user) {
+      router.replace('/resumes')
+    }
+  }, [user, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

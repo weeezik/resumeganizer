@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
 
 const categories = [
   { name: 'Software Development', color: 'bg-[#0061FE]' },

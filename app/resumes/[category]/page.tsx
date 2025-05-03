@@ -10,7 +10,6 @@ import { ResumeList } from '@/components/ResumeList'
 import Link from 'next/link'
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { updateResumeDetails, deleteResume } from '@/lib/resumeUtils'
-import Navbar from '@/components/Navbar'
 
 export default function CategoryPage() {
   const params = useParams()

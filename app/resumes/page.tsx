@@ -7,7 +7,6 @@ import { collection, onSnapshot, doc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { ResumeCategory } from '@/types'
 import { createCategory, updateCategoryName, deleteCategory } from '@/lib/resumeUtils'
-import Navbar from '@/components/Navbar'
 
 const categoryColors = [
   '#0061FE', // Software Development

@@ -11,13 +11,10 @@ import { useAuth } from '@/context/AuthContext'
 import RequireAuth from '@/components/RequireAuth'
 
 const categoryColors = [
-  '#0061FE', // Software Development
-  '#F000F0', // Project Management
-  '#FE9D00', // Hostel/Farm Work
-  '#00FE1E', // Master's Degree
-  '#cd9552', // Bachelor's Degree
-  '#e8a827', // High School Diploma
-  '#33e1b2', // Other
+  '#A8D5E2', // pastel blue
+  '#B5EAD7', // pastel green
+  '#C7CEEA', // pastel purple
+  '#FFDAC1', // pastel orange
 ]
 
 export default function ResumesPage() {
@@ -242,7 +239,9 @@ export default function ResumesPage() {
                 className="w-full rounded-t-[48px] rounded-b-[48px] bg-white text-gray-700 text-2xl font-medium py-6 px-8 border-2 border-dashed border-gray-300 mt-2 hover:bg-gray-50 transition"
                 onClick={() => setIsAdding(true)}
               >
-                Add a Resume Category
+                {categories.length === 0
+                  ? "No categories yet? Add one to get started."
+                  : "Add a Resume Category"}
               </button>
             )}
           </div>

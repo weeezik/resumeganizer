@@ -1,10 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
 
-const categories = [
-  { name: 'Software Development', color: 'bg-[#0061FE]' },
-  { name: 'Project Management', color: 'bg-[#F000F0]' },
-  { name: 'Agriculture and Farm Work', color: 'bg-[#FE9D00]' },
+const exampleCategories = [
+  { name: 'Software Development', color: '#A8D5E2' },
+  { name: 'Project Management', color: '#B5EAD7' },
+  { name: 'Hostel/Farm Work', color: '#C7CEEA' },
+  { name: 'Master\'s Degree', color: '#FFDAC1' },
 ]
 
 export default function LandingPage() {
@@ -30,10 +31,11 @@ export default function LandingPage() {
         </div>
         {/* Right: Category Pills */}
         <div className="flex flex-col gap-6 items-end w-full max-w-md">
-          {categories.map((cat) => (
+          {exampleCategories.map((cat) => (
             <div
               key={cat.name}
-              className={`w-full rounded-full ${cat.color} text-white text-2xl font-medium py-4 px-8 shadow-lg`}
+              className="w-full rounded-full text-gray-900 text-2xl font-medium py-4 px-8 shadow-lg"
+              style={{ backgroundColor: cat.color }}
             >
               {cat.name}
             </div>

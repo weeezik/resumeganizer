@@ -18,9 +18,8 @@ export default function LandingPage() {
             An online file cabinet<br />for your resumes.
           </h1>
           <p className="text-xl text-gray-800 mb-8">
-            Resumeganizer helps job seekers organize and track different versions of their resume when applying to multiple roles. 
-            Struggling to keep track of resumes?
-            With Resumeganizer, keep every version organized and in one place.
+          Resumeganizer helps you organize and manage different versions of your resume — 
+          tailored to each job you apply to. No more searching your folders. Keep everything in one place.
           </p>
           <a
             href="/resumes"

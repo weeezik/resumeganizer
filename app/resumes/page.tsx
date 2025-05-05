@@ -16,7 +16,6 @@ const categoryColors = [
   '#FE9D00', // Hostel/Farm Work
   '#00FE1E', // Master's Degree
   '#cd9552', // Bachelor's Degree
-  '#e8a827', // High School Diploma
   '#33e1b2', // Other
 ]
 

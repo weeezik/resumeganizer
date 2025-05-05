@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from '@/context/AuthContext'
 import Navbar from '@/components/Navbar'
 import Footer from './components/Footer'
+import FeedbackButtonWrapper from './components/FeedbackButtonWrapper'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,8 @@ export default function RootLayout({
         <AuthProvider>
           <Navbar />
           {children}
+          <Footer />
+          <FeedbackButtonWrapper />
         </AuthProvider>
       </body>
     </html>

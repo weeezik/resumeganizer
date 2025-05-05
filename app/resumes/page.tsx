@@ -15,6 +15,8 @@ const categoryColors = [
   '#B5EAD7', // pastel green
   '#C7CEEA', // pastel purple
   '#FFDAC1', // pastel orange
+  '#D2F5B1', // pastel lime
+  '#D6B4F5', // pastel lavender
 ]
 
 export default function ResumesPage() {

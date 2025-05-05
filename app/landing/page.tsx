@@ -4,6 +4,10 @@ import React from 'react'
 import Link from 'next/link'
 import { DocumentDuplicateIcon } from '@heroicons/react/24/outline'
 
+// Use Inter font via next/font
+import { Inter } from 'next/font/google'
+const inter = Inter({ subsets: ['latin'] })
+
 const exampleCategories = [
   { name: 'Software Development', color: '#A8D5E2' },
   { name: 'Project Management', color: '#B5EAD7' },
@@ -13,43 +17,43 @@ const exampleCategories = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#F6F5F5] flex flex-col">
-      {/* Hero Section */}
-      <main className="flex-1 flex flex-col md:flex-row items-center justify-center px-4 md:px-8 py-8 md:py-16 gap-12">
-        {/* Illustration */}
-        <div className="mb-8 md:mb-0 flex-shrink-0 flex items-center justify-center">
-          <div className="bg-blue-100 rounded-full p-6 shadow-lg animate-fade-in">
-            <DocumentDuplicateIcon className="w-24 h-24 text-blue-400 animate-bounce-slow" aria-hidden="true" />
+    <div className={`${inter.className} min-h-screen bg-[#F6F5F5] flex flex-col`}>
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
+        {/* Hero Card */}
+        <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl flex flex-col md:flex-row items-center md:items-stretch overflow-hidden">
+          {/* Illustration */}
+          <div className="flex items-center justify-center bg-blue-50 md:bg-gradient-to-b md:from-blue-50 md:to-white p-8 md:p-12">
+            <DocumentDuplicateIcon className="w-28 h-28 md:w-40 md:h-40 text-blue-400 animate-bounce-slow" aria-hidden="true" />
           </div>
-        </div>
-        {/* Text & CTA */}
-        <div className="max-w-xl w-full">
-          <h1 className="text-4xl md:text-6xl font-light mb-6 leading-tight text-gray-900">
-            An online file cabinet<br />for your resumes.
-          </h1>
-          <p className="text-lg md:text-xl text-gray-800 mb-8">
-            Resumeganizer helps you organize and manage different versions of your resume — tailored to each job you apply to. No more searching your folders. Keep everything in one place.
-          </p>
-          <Link
-            href="/resumes"
-            className="inline-block bg-blue-600 hover:bg-blue-700 hover:scale-105 transition-transform text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg mb-8 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            aria-label="Get Started"
-          >
-            Get Started
-          </Link>
-          {/* Category Pills */}
-          <div className="flex flex-col gap-4 mt-8 w-full max-w-md">
-            {exampleCategories.map((cat) => (
-              <div
-                key={cat.name}
-                className="w-full rounded-full text-gray-900 text-xl md:text-2xl font-medium py-3 md:py-4 px-6 md:px-8 shadow-lg transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-200"
-                style={{ backgroundColor: cat.color }}
-                tabIndex={0}
-                aria-label={cat.name}
-              >
-                {cat.name}
-              </div>
-            ))}
+          {/* Text & CTA */}
+          <div className="flex-1 flex flex-col justify-center p-8 md:p-12">
+            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+              All your resumes in one place.
+            </h1>
+            <p className="text-lg md:text-xl text-gray-700 mb-8">
+              Organize, label, and track every version of your resume—tailored to each job you apply to. No more searching your folders. Keep everything in one place.
+            </p>
+            <Link
+              href="/resumes"
+              className="inline-block bg-blue-600 hover:bg-blue-700 hover:scale-105 transition-transform text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              aria-label="Get Started"
+            >
+              Get Started
+            </Link>
+            {/* Category Pills */}
+            <div className="flex flex-wrap gap-3 mt-8">
+              {exampleCategories.map((cat) => (
+                <span
+                  key={cat.name}
+                  className="rounded-full text-gray-900 text-base md:text-lg font-medium py-2 px-5 shadow-md"
+                  style={{ backgroundColor: cat.color }}
+                  tabIndex={0}
+                  aria-label={cat.name}
+                >
+                  {cat.name}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </main>
@@ -60,13 +64,6 @@ export default function LandingPage() {
         }
         .animate-bounce-slow {
           animation: bounce-slow 2.5s infinite;
-        }
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fade-in {
-          animation: fade-in 1s ease;
         }
       `}</style>
     </div>

@@ -34,7 +34,6 @@ export default function RootLayout({
         <AuthProvider>
           <Navbar />
           {children}
-          <Footer />
           <FeedbackButtonWrapper />
         </AuthProvider>
       </body>

@@ -4,7 +4,7 @@ import "./globals.css";
 import { AuthProvider } from '@/context/AuthContext'
 import Navbar from '@/components/Navbar'
 import Footer from './components/Footer'
-import FeedbackButtonWrapper from './components/FeedbackButtonWrapper'
+import FeedbackButtonWrapper from './components/feedbackbutton/FeedbackButtonWrapper'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

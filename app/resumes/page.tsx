@@ -248,7 +248,11 @@ export default function ResumesPage() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {catResumes.map(resume => (
-                        <ResumeCard key={resume.id} resume={resume} />
+                        <ResumeCard
+                          key={resume.id}
+                          resume={resume}
+                          color={cat.color}
+                        />
                       ))}
                     </div>
                   </div>
@@ -262,9 +266,16 @@ export default function ResumesPage() {
                 <h2 className="text-2xl font-bold">{categories.find(c => c.id === selectedCategory)?.name}</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                {resumes.map(resume => (
-                  <ResumeCard key={resume.id} resume={resume} />
-                ))}
+                {resumes.map(resume => {
+                  const category = categories.find(c => c.id === resume.category);
+                  return (
+                    <ResumeCard
+                      key={resume.id}
+                      resume={resume}
+                      color={category?.color || '#0061FE'}
+                    />
+                  );
+                })}
                 <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-xl bg-white p-4 min-h-[220px] min-w-[220px] shadow-md transition">
                   <UploadResume categoryId={selectedCategory} />
                 </div>
@@ -286,7 +297,7 @@ export default function ResumesPage() {
 }
 
 // Helper ResumeCard for preview (simplified, you can expand as needed)
-function ResumeCard({ resume }: { resume: Resume }) {
+function ResumeCard({ resume, color }: { resume: Resume, color: string }) {
   const [editing, setEditing] = React.useState(false);
   const [editForm, setEditForm] = React.useState({
     company: resume.company || '',
@@ -332,7 +343,10 @@ function ResumeCard({ resume }: { resume: Resume }) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow p-4 flex flex-col gap-2 border-t-4" style={{ borderTopColor: '#0061FE' }}>
+    <div
+      className="bg-white rounded-xl shadow p-4 flex flex-col gap-2 border-t-4"
+      style={{ borderTopColor: color }}
+    >
       {editing ? (
         <form onSubmit={e => { e.preventDefault(); handleEditSave(); }} className="flex flex-col gap-2">
           <input

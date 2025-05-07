@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { collection, onSnapshot, doc, query, where } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { ResumeCategory, Resume } from '@/types'
-import { createCategory, updateCategoryName, deleteCategory } from '@/lib/resumeUtils'
+import { createCategory, updateCategoryName, deleteCategory, updateResumeDetails, deleteResume } from '@/lib/resumeUtils'
 import { useAuth } from '@/context/AuthContext'
 import RequireAuth from '@/components/RequireAuth'
 import { ResumeList } from '@/components/ResumeList'
@@ -261,18 +261,14 @@ export default function ResumesPage() {
                 <span className="w-4 h-4 rounded-full" style={{ backgroundColor: categories.find(c => c.id === selectedCategory)?.color }} />
                 <h2 className="text-2xl font-bold">{categories.find(c => c.id === selectedCategory)?.name}</h2>
               </div>
-              <UploadResume categoryId={selectedCategory} />
-              {resumes.length === 0 ? (
-                <div className="mt-8 flex flex-col items-center justify-center border-2 border-dashed bg-white rounded-2xl p-8 min-h-[220px] min-w-[220px] shadow-md transition cursor-pointer hover:border-blue-400">
-                  <span className="text-gray-500 text-lg">No resumes yet. Add your first resume!</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                {resumes.map(resume => (
+                  <ResumeCard key={resume.id} resume={resume} />
+                ))}
+                <div className="flex flex-col items-center justify-center border-2 border-dashed bg-white rounded-xl p-4 min-h-[220px] min-w-[220px] shadow-md transition cursor-pointer hover:border-blue-400">
+                  <UploadResume categoryId={selectedCategory} />
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                  {resumes.map(resume => (
-                    <ResumeCard key={resume.id} resume={resume} />
-                  ))}
-                </div>
-              )}
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full">
@@ -291,12 +287,159 @@ export default function ResumesPage() {
 
 // Helper ResumeCard for preview (simplified, you can expand as needed)
 function ResumeCard({ resume }: { resume: Resume }) {
+  const [editing, setEditing] = React.useState(false);
+  const [editForm, setEditForm] = React.useState({
+    company: resume.company || '',
+    jobTitle: resume.jobTitle || '',
+    status: resume.status || 'not applied',
+    notes: resume.notes || '',
+  });
+  const [loading, setLoading] = React.useState(false);
+  const [showPreview, setShowPreview] = React.useState(false);
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const [showModal, setShowModal] = React.useState(false);
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEditForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSave = async () => {
+    setLoading(true);
+    try {
+      await updateResumeDetails(resume.id, {
+        ...editForm,
+        status: editForm.status as Resume['status'],
+      });
+      setEditing(false);
+    } catch (error) {
+      alert('Error saving edit.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Delete this resume?')) return;
+    setLoading(true);
+    try {
+      await deleteResume(resume.id);
+    } catch (error) {
+      alert('Error deleting resume.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl shadow p-4 flex flex-col gap-2 border-t-4" style={{ borderTopColor: '#0061FE' }}>
-      <div className="font-semibold text-lg truncate">{resume.fileName}</div>
-      <div className="text-sm text-gray-600 truncate">{resume.company} — {resume.jobTitle}</div>
-      <div className="text-xs text-gray-400">Updated: {resume.updatedAt?.toLocaleDateString()}</div>
-      <a href={resume.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm mt-2">View</a>
+      {editing ? (
+        <form onSubmit={e => { e.preventDefault(); handleEditSave(); }} className="flex flex-col gap-2">
+          <input
+            name="company"
+            value={editForm.company}
+            onChange={handleEditChange}
+            className="p-2 rounded border border-gray-300 placeholder-gray-400 text-gray-900"
+            placeholder="Company"
+            disabled={loading}
+          />
+          <input
+            name="jobTitle"
+            value={editForm.jobTitle}
+            onChange={handleEditChange}
+            className="p-2 rounded border border-gray-300 placeholder-gray-400 text-gray-900"
+            placeholder="Job Title"
+            disabled={loading}
+          />
+          <select
+            name="status"
+            value={editForm.status}
+            onChange={handleEditChange}
+            className="p-2 rounded border border-gray-300 text-gray-900"
+            disabled={loading}
+          >
+            <option value="not applied">Not Applied</option>
+            <option value="applied">Applied</option>
+            <option value="interviewed">Interviewed</option>
+            <option value="got an offer">Got an Offer</option>
+          </select>
+          <textarea
+            name="notes"
+            value={editForm.notes}
+            onChange={handleEditChange}
+            className="p-2 rounded border border-gray-300 placeholder-gray-400 text-gray-900"
+            placeholder="Notes"
+            rows={2}
+            disabled={loading}
+          />
+          <div className="flex gap-2 mt-auto pt-2">
+            <button type="button" className="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700" onClick={() => setEditing(false)} disabled={loading}>Cancel</button>
+            <button type="submit" className="px-2 py-1 rounded bg-blue-500 hover:bg-blue-600 text-white" disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
+          </div>
+        </form>
+      ) : (
+        <>
+          <div className="font-semibold text-lg truncate text-gray-900">{resume.fileName}</div>
+          <div className="text-base text-gray-800">Company: <span className="font-normal">{resume.company || '-'}</span></div>
+          <div className="text-base text-gray-800">Position: <span className="font-normal">{resume.jobTitle || '-'}</span></div>
+          <div className="text-base text-gray-800">Updated: <span className="font-normal">{resume.updatedAt ? resume.updatedAt.toLocaleDateString() : '-'}</span></div>
+          <div className="text-base text-gray-800">Notes: <span className="font-normal">{resume.notes || '-'}</span></div>
+          <div className="text-base text-gray-800">Status: <span className="font-normal">{resume.status || '-'}</span></div>
+          <div className="flex gap-2 mt-auto pt-2">
+            <button
+              className="flex items-center gap-1 px-2 py-1 text-blue-600 hover:text-blue-800 text-sm rounded transition"
+              onClick={() => setEditing(true)}
+            >
+              Edit
+            </button>
+            <button
+              className="flex items-center gap-1 px-2 py-1 text-red-500 hover:text-red-700 text-sm rounded transition"
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
+            <button
+              className="flex items-center gap-1 px-2 py-1 text-green-600 hover:text-green-800 text-sm rounded transition"
+              onClick={() => setShowModal(true)}
+            >
+              Preview
+            </button>
+          </div>
+        </>
+      )}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-col">
+                <span className="font-semibold text-gray-900">
+                  {resume.company || '-'}
+                </span>
+                <span className="text-gray-700 text-sm">
+                  {resume.jobTitle || '-'}
+                </span>
+                <span className="text-gray-500 text-xs">
+                  Updated: {resume.updatedAt ? resume.updatedAt.toLocaleDateString() : '-'}
+                </span>
+              </div>
+              <button
+                className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700"
+                onClick={() => setShowModal(false)}
+              >
+                Close
+              </button>
+            </div>
+            <iframe
+              src={resume.fileUrl.endsWith('.pdf')
+                ? resume.fileUrl
+                : `https://docs.google.com/gview?url=${encodeURIComponent(resume.fileUrl)}&embedded=true`}
+              title="Document Preview"
+              className="flex-1 w-full rounded"
+              style={{ minHeight: '60vh' }}
+            />
+          </div>
+        </div>
+      )}
     </div>
-  )
+  );
 } 

@@ -265,7 +265,7 @@ export default function ResumesPage() {
                 {resumes.map(resume => (
                   <ResumeCard key={resume.id} resume={resume} />
                 ))}
-                <div className="flex flex-col items-center justify-center border-2 border-dashed bg-white rounded-xl p-4 min-h-[220px] min-w-[220px] shadow-md transition cursor-pointer hover:border-blue-400">
+                <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-xl bg-white p-4 min-h-[220px] min-w-[220px] shadow-md transition">
                   <UploadResume categoryId={selectedCategory} />
                 </div>
               </div>

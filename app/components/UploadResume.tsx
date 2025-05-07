@@ -59,12 +59,12 @@ export function UploadResume({ categoryId }: { categoryId: string }) {
   return (
     <div className="w-full">
       <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center ${
+        className={`rounded-lg p-8 text-center transition-shadow duration-200 ${
           isDragging
-            ? 'border-blue-500 bg-blue-50'
+            ? 'bg-blue-50 ring-2 ring-blue-300'
             : isUploading
-            ? 'border-gray-400 bg-gray-50'
-            : 'border-gray-300 hover:border-gray-400'
+            ? 'bg-gray-50'
+            : 'hover:ring-2 hover:ring-gray-300 cursor-pointer'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}

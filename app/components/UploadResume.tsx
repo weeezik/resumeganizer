@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { uploadResume } from '@/lib/resumeUtils'
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 export function UploadResume({ categoryId }: { categoryId: string }) {
   const { user } = useAuth()
@@ -43,7 +43,7 @@ export function UploadResume({ categoryId }: { categoryId: string }) {
     try {
       for (const file of files) {
         if (!user) return
-        await uploadResume(file, categoryId, user.uid)
+        await uploadResume(file, user.uid)
       }
     } catch (error) {
       console.error('Error uploading files:', error)
@@ -97,4 +97,20 @@ export function UploadResume({ categoryId }: { categoryId: string }) {
       </div>
     </div>
   )
+}
+
+export async function uploadResume(file: File, userId: string) {
+  const storage = getStorage();
+  const filePath = `resumes/${userId}/${file.name}`;
+  const fileRef = ref(storage, filePath);
+
+  // Optionally add metadata
+  const metadata = {
+    customMetadata: {
+      userId: userId,
+    },
+  };
+
+  await uploadBytes(fileRef, file, metadata);
+  // Do NOT create a Firestore document here!
 } 

@@ -66,17 +66,19 @@ export const processResume = onObjectFinalized(
       const parsedData = JSON.parse(content);
 
       // Save to Firestore
+      const docId = object.name.replace(/[^a-zA-Z0-9]/g, '_');
       await admin.firestore()
         .collection('resumes')
-        .doc(object.name.replace(/[^a-zA-Z0-9]/g, '_'))
+        .doc(docId)
         .set({
           filePath: object.name,
-          chunks: {
-            workExperience: parsedData.workExperience,
-            skills: parsedData.skills,
-            summary: parsedData.summary
-          },
-          tags: parsedData.tags
+          fileUrl: file.publicUrl(),
+          userId: file.metadata?.metadata?.userId,
+          chunks: parsedData.chunks,
+          tags: parsedData.tags,
+          suggestions: parsedData.suggestions,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         });
 
       console.log('Successfully processed resume:', object.name);

@@ -11,6 +11,7 @@ import { useAuth } from '@/context/AuthContext'
 import RequireAuth from '@/components/RequireAuth'
 import { ResumeList } from '@/components/ResumeList'
 import { UploadResume } from '@/components/UploadResume'
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 const categoryColors = [
   '#0061FE', // Software Development
@@ -176,14 +177,29 @@ export default function ResumesPage() {
           </div>
           <div className="flex-1 overflow-y-auto">
             {categories.map(cat => (
-              <button
+              <div
                 key={cat.id}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition text-left ${selectedCategory === cat.id && !showAll ? 'bg-blue-50' : 'hover:bg-gray-100'}`}
+                style={{ cursor: 'pointer' }}
                 onClick={() => { setSelectedCategory(cat.id); setShowAll(false); }}
               >
                 <span className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
                 <span className="flex-1 truncate">{cat.name}</span>
-              </button>
+                <button
+                  className="p-1 text-gray-400 hover:text-blue-600"
+                  onClick={e => { e.stopPropagation(); handleEditCategory(cat); }}
+                  aria-label={`Edit ${cat.name}`}
+                >
+                  <PencilIcon className="w-4 h-4" />
+                </button>
+                <button
+                  className="p-1 text-gray-400 hover:text-red-500"
+                  onClick={e => { e.stopPropagation(); handleDeleteCategory(cat); }}
+                  aria-label={`Delete ${cat.name}`}
+                >
+                  <TrashIcon className="w-4 h-4" />
+                </button>
+              </div>
             ))}
           </div>
           <button

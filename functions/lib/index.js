@@ -38,26 +38,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.processResume = void 0;
 const storage_1 = require("firebase-functions/v2/storage");
-const functions = __importStar(require("firebase-functions"));
 const admin = __importStar(require("firebase-admin"));
 const pdf_parse_1 = __importDefault(require("pdf-parse"));
 const mammoth = __importStar(require("mammoth"));
 const openai_1 = __importDefault(require("openai"));
 const dotenv = __importStar(require("dotenv"));
+const params_1 = require("firebase-functions/params");
 // Load environment variables in development
 if (process.env.NODE_ENV !== 'production') {
     dotenv.config();
 }
 admin.initializeApp();
-// Get OpenAI API key from Firebase config
-const openaiConfig = functions.config().openai;
-if (!(openaiConfig === null || openaiConfig === void 0 ? void 0 : openaiConfig.key)) {
-    throw new Error('OpenAI API key not found in Firebase config');
-}
-const openai = new openai_1.default({
-    apiKey: openaiConfig.key,
-});
-exports.processResume = (0, storage_1.onObjectFinalized)(async (event) => {
+const openaiApiKey = (0, params_1.defineSecret)('OPENAI_API_KEY');
+exports.processResume = (0, storage_1.onObjectFinalized)({ secrets: [openaiApiKey] }, async (event) => {
     const object = event.data;
     if (!object.name) {
         console.error('No file name provided');
@@ -85,6 +78,9 @@ exports.processResume = (0, storage_1.onObjectFinalized)(async (event) => {
             text = result.value;
         }
         // Use OpenAI to extract structured data
+        const openai = new openai_1.default({
+            apiKey: process.env.OPENAI_API_KEY,
+        });
         const completion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [

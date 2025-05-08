@@ -164,6 +164,10 @@ export default function ResumesPage() {
               className="flex items-center gap-1 px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full font-medium text-sm shadow-sm hover:bg-blue-100 transition"
               onClick={() => setShowAll(true)}
             >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
               View All
             </button>
           </div>
@@ -187,7 +191,7 @@ export default function ResumesPage() {
               </div>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto flex flex-col">
             {categories.map(cat => (
               <div
                 key={cat.id}
@@ -282,52 +286,56 @@ export default function ResumesPage() {
                 )}
               </div>
             ))}
-          </div>
-          <button
-            className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg"
-            onClick={() => setIsAdding(true)}
-          >+ Add Resume Category</button>
-          {isAdding && (
-            <form
-              onSubmit={handleAddCategory}
-              className="mt-2 flex flex-col gap-2 bg-gray-50 p-3 rounded-lg border"
-            >
-              <input
-                type="text"
-                value={newCategory}
-                onChange={e => setNewCategory(e.target.value)}
-                placeholder="Category name"
-                className="p-2 border rounded"
-                autoFocus
-                disabled={loading}
-              />
-              <div className="flex gap-2">
-                {categoryColors.map(color => (
+            {!isAdding && (
+              <button
+                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg"
+                onClick={() => setIsAdding(true)}
+              >
+                + Add Resume Category
+              </button>
+            )}
+            {isAdding && (
+              <form
+                onSubmit={handleAddCategory}
+                className="mt-2 flex flex-col gap-2 bg-gray-50 p-3 rounded-lg border"
+              >
+                <input
+                  type="text"
+                  value={newCategory}
+                  onChange={e => setNewCategory(e.target.value)}
+                  placeholder="Category name"
+                  className="p-2 border rounded"
+                  autoFocus
+                  disabled={loading}
+                />
+                <div className="flex gap-2">
+                  {categoryColors.map(color => (
+                    <button
+                      key={color}
+                      type="button"
+                      className={`w-6 h-6 rounded-full border-2 ${selectedColor === color ? 'border-black' : 'border-gray-300'}`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => setSelectedColor(color)}
+                      aria-label={`Select color ${color}`}
+                    />
+                  ))}
+                </div>
+                <div className="flex gap-2 justify-end">
                   <button
-                    key={color}
                     type="button"
-                    className={`w-6 h-6 rounded-full border-2 ${selectedColor === color ? 'border-black' : 'border-gray-300'}`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => setSelectedColor(color)}
-                    aria-label={`Select color ${color}`}
-                  />
-                ))}
-              </div>
-              <div className="flex gap-2 justify-end">
-                <button
-                  type="button"
-                  className="px-3 py-1 text-gray-600 hover:text-gray-800"
-                  onClick={() => { setIsAdding(false); setNewCategory('') }}
-                  disabled={loading}
-                >Cancel</button>
-                <button
-                  type="submit"
-                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-                  disabled={loading}
-                >Add</button>
-              </div>
-            </form>
-          )}
+                    className="px-3 py-1 text-gray-600 hover:text-gray-800"
+                    onClick={() => { setIsAdding(false); setNewCategory('') }}
+                    disabled={loading}
+                  >Cancel</button>
+                  <button
+                    type="submit"
+                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+                    disabled={loading}
+                  >Add</button>
+                </div>
+              </form>
+            )}
+          </div>
         </aside>
         {/* Main Content */}
         <main className="flex-1 p-10 overflow-y-auto">
@@ -381,10 +389,12 @@ export default function ResumesPage() {
           ) : (
             <div className="flex flex-col items-center justify-center h-full">
               <div className="text-2xl text-gray-400 mb-4">Select a category to view resumes</div>
-              <button
-                className="bg-blue-600 text-white px-6 py-3 rounded-full shadow hover:bg-blue-700"
-                onClick={() => setIsAdding(true)}
-              >+ Add Resume Category</button>
+              {!isAdding && (
+                <button
+                  className="bg-blue-600 text-white px-6 py-3 rounded-full shadow hover:bg-blue-700"
+                  onClick={() => setIsAdding(true)}
+                >+ Add Resume Category</button>
+              )}
             </div>
           )}
         </main>

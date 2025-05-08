@@ -1,18 +1,8 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
-import { collection, query, where, onSnapshot, orderBy, doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import { Resume } from '@/types'
-import { UploadResume } from '@/components/UploadResume'
-import { ResumeList } from '@/components/ResumeList'
-import Link from 'next/link'
-import { PencilIcon, TrashIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'
-import { updateResumeDetails, deleteResume, createResume, uploadResume } from '@/lib/resumeUtils'
-import { useAuth } from '@/context/AuthContext'
-import { useRouter } from 'next/navigation'
-import RequireAuth from '@/components/RequireAuth'
 
 export default function ResumeViewPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -40,11 +30,12 @@ export default function ResumeViewPage({ params }: { params: { id: string } }) {
       <div className="flex-1 border-r p-6">
         <h2 className="text-xl font-bold mb-4">Resume Preview</h2>
         <iframe
-          src={resume.fileUrl} // Make sure you store the file URL in Firestore!
+          src={`https://docs.google.com/gview?url=${encodeURIComponent(resume.fileUrl)}&embedded=true`}
           width="100%"
           height="600"
           style={{ border: "none" }}
           title="Resume"
+          allowFullScreen
         />
       </div>
       {/* Right: AI Suggestions */}

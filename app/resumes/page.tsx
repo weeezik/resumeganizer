@@ -169,7 +169,7 @@ export default function ResumesPage() {
           <div className="flex items-center justify-between mb-2">
             <span className="text-lg font-semibold">Categories</span>
             <button
-              className="flex items-center gap-1 px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full font-medium text-sm shadow-sm hover:bg-blue-100 transition"
+              className="flex items-center gap-1 px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full font-medium text-sm hover:bg-blue-100 transition"
               onClick={() => setShowAll(true)}
             >
               View All

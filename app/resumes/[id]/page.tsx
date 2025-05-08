@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import { useParams } from 'next/navigation'
 
-export default function ResumeViewPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function ResumeViewPage() {
+  const params = useParams();
+  const id = params.id as string;
   const [resume, setResume] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 

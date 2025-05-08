@@ -574,47 +574,16 @@ function ResumeCard({ resume, color, onRequestDelete }: { resume: Resume, color:
             >
               Delete
             </button>
-            <button
-              className="flex items-center gap-1 px-2 py-1 text-green-600 hover:text-green-800 text-sm rounded transition"
-              onClick={() => setShowModal(true)}
-            >
-              View
-            </button>
+            <Link href={`/resumes/${resume.id}`}>
+              <button
+                className="flex items-center gap-1 px-2 py-1 text-green-600 hover:text-green-800 text-sm rounded transition"
+                type="button"
+              >
+                View
+              </button>
+            </Link>
           </div>
         </>
-      )}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full h-[80vh] flex flex-col">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex flex-col">
-                <span className="font-semibold text-gray-900">
-                  {resume.company || '-'}
-                </span>
-                <span className="text-gray-700 text-sm">
-                  {resume.jobTitle || '-'}
-                </span>
-                <span className="text-gray-500 text-xs">
-                  Updated: {resume.updatedAt ? resume.updatedAt.toLocaleDateString() : '-'}
-                </span>
-              </div>
-              <button
-                className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700"
-                onClick={() => setShowModal(false)}
-              >
-                Close
-              </button>
-            </div>
-            <iframe
-              src={resume.fileUrl.endsWith('.pdf')
-                ? resume.fileUrl
-                : `https://docs.google.com/gview?url=${encodeURIComponent(resume.fileUrl)}&embedded=true`}
-              title="Document Preview"
-              className="flex-1 w-full rounded"
-              style={{ minHeight: '60vh' }}
-            />
-          </div>
-        </div>
       )}
     </div>
   );

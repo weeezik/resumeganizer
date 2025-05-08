@@ -483,7 +483,7 @@ function ResumeCard({ resume, color, onRequestDelete }: { resume: Resume, color:
 
   return (
     <div
-      className="bg-white rounded-xl shadow p-4 flex flex-col gap-2 border-t-4"
+      className="bg-white rounded-xl shadow p-6 flex flex-col gap-2 border-t-4"
       style={{ borderTopColor: color }}
     >
       {editing ? (
@@ -532,26 +532,26 @@ function ResumeCard({ resume, color, onRequestDelete }: { resume: Resume, color:
         </form>
       ) : (
         <>
-          <div className="font-bold text-xl text-gray-900 truncate">{resume.jobTitle || '-'}</div>
-          <div className="text-md text-gray-500 mb-2 flex items-center gap-2">
-            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <div className="font-bold text-xl text-gray-900 truncate mb-0.5">{resume.jobTitle || '-'}</div>
+          <div className="flex items-center gap-2 text-md text-gray-500 mb-1">
+            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 2v6h6" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 10v10a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2H5a2 2 0 00-2 2z" />
             </svg>
-            {resume.company || '-'}
+            <span className="truncate">{resume.company || '-'}</span>
           </div>
           <div className="flex items-center gap-2 text-gray-600 text-sm mb-1">
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            {resume.updatedAt ? resume.updatedAt.toLocaleDateString() : '-'}
+            <span>{resume.updatedAt ? resume.updatedAt.toLocaleDateString() : '-'}</span>
           </div>
           {resume.notes && (
             <div className="flex items-center gap-2 text-gray-600 text-sm mb-1">
               <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              {resume.notes}
+              <span>{resume.notes}</span>
             </div>
           )}
           <div className="flex items-center gap-2 text-gray-600 text-sm mb-2">
@@ -559,7 +559,7 @@ function ResumeCard({ resume, color, onRequestDelete }: { resume: Resume, color:
               <circle cx="12" cy="12" r="10" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
             </svg>
-            {resume.status}
+            <span className="capitalize">{resume.status}</span>
           </div>
           <div className="flex gap-2 mt-auto pt-2">
             <button

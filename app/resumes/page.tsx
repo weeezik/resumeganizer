@@ -519,7 +519,7 @@ function ResumeCard({ resume, color }: { resume: Resume, color: string }) {
               className="flex items-center gap-1 px-2 py-1 text-green-600 hover:text-green-800 text-sm rounded transition"
               onClick={() => setShowModal(true)}
             >
-              Preview
+              View
             </button>
           </div>
         </>

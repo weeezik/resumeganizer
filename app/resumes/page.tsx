@@ -41,6 +41,8 @@ export default function ResumesPage() {
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [editColor, setEditColor] = useState<string>('');
   const [showAll, setShowAll] = useState(false)
+  const [showColorModal, setShowColorModal] = useState(false);
+  const [colorModalForId, setColorModalForId] = useState<string | null>(null);
   const router = useRouter()
   const { user } = useAuth()
 
@@ -181,24 +183,93 @@ export default function ResumesPage() {
                 key={cat.id}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg mb-1 transition text-left ${selectedCategory === cat.id && !showAll ? 'bg-blue-50' : 'hover:bg-gray-100'}`}
                 style={{ cursor: 'pointer' }}
-                onClick={() => { setSelectedCategory(cat.id); setShowAll(false); }}
+                onClick={() => { if (editingId !== cat.id) { setSelectedCategory(cat.id); setShowAll(false); } }}
               >
-                <span className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
-                <span className="flex-1 truncate">{cat.name}</span>
-                <button
-                  className="p-1 text-gray-400 hover:text-blue-600"
-                  onClick={e => { e.stopPropagation(); handleEditCategory(cat); }}
-                  aria-label={`Edit ${cat.name}`}
-                >
-                  <PencilIcon className="w-4 h-4" />
-                </button>
-                <button
-                  className="p-1 text-gray-400 hover:text-red-500"
-                  onClick={e => { e.stopPropagation(); handleDeleteCategory(cat); }}
-                  aria-label={`Delete ${cat.name}`}
-                >
-                  <TrashIcon className="w-4 h-4" />
-                </button>
+                {editingId === cat.id ? (
+                  // Edit mode
+                  <form
+                    className="flex-1 flex items-center gap-2 relative"
+                    onSubmit={e => { e.preventDefault(); handleSaveEdit(cat); }}
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={e => setEditValue(e.target.value)}
+                      className="flex-1 p-1 border rounded text-sm"
+                      placeholder="Category name"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      className="w-6 h-6 rounded-full border-2 border-gray-300"
+                      style={{ backgroundColor: editColor }}
+                      onClick={() => setColorModalForId(cat.id)}
+                      aria-label="Select color"
+                    />
+                    {colorModalForId === cat.id && (
+                      <div className="absolute left-0 top-10 z-50 bg-white rounded shadow p-2 border" style={{ minWidth: 160 }}>
+                        <div className="grid grid-cols-6 gap-1 mb-2">
+                          {categoryColors.map(color => (
+                            <button
+                              key={color}
+                              type="button"
+                              className={`w-6 h-6 rounded border-2 ${editColor === color ? 'border-black' : 'border-gray-300'} hover:border-blue-500 transition`}
+                              style={{ backgroundColor: color }}
+                              onClick={() => {
+                                setEditColor(color);
+                                setShowColorModal(false);
+                              }}
+                              aria-label={`Select color ${color}`}
+                            />
+                          ))}
+                        </div>
+                        <div className="flex justify-end">
+                          <button
+                            type="button"
+                            className="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                            onClick={() => setColorModalForId(null)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      type="submit"
+                      className="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      className="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+                      onClick={() => setEditingId(null)}
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                ) : (
+                  // View mode
+                  <>
+                    <span className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
+                    <span className="flex-1 truncate">{cat.name}</span>
+                    <button
+                      className="p-1 text-gray-400 hover:text-blue-600"
+                      onClick={e => { e.stopPropagation(); handleEditCategory(cat); }}
+                      aria-label={`Edit ${cat.name}`}
+                    >
+                      <PencilIcon className="w-4 h-4" />
+                    </button>
+                    <button
+                      className="p-1 text-gray-400 hover:text-red-500"
+                      onClick={e => { e.stopPropagation(); handleDeleteCategory(cat); }}
+                      aria-label={`Delete ${cat.name}`}
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
               </div>
             ))}
           </div>

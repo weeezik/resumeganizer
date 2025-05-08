@@ -12,6 +12,7 @@ import RequireAuth from '@/components/RequireAuth'
 import { ResumeList } from '@/components/ResumeList'
 import { UploadResume } from '@/components/UploadResume'
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import ConfirmModal from '@/components/ConfirmModal'
 
 const categoryColors = [
   '#0061FE', // Software Development
@@ -43,6 +44,7 @@ export default function ResumesPage() {
   const [showAll, setShowAll] = useState(false)
   const [showColorModal, setShowColorModal] = useState(false);
   const [colorModalForId, setColorModalForId] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState<{ open: boolean, message: string, onConfirm: () => void } | null>(null);
   const router = useRouter()
   const { user } = useAuth()
 
@@ -139,16 +141,22 @@ export default function ResumesPage() {
     }
   };
 
-  const handleDeleteCategory = async (cat: ResumeCategory) => {
-    if (!window.confirm(`Delete category "${cat.name}"? This cannot be undone.`)) return
-    setLoading(true)
-    try {
-      await deleteCategory(cat.id)
-    } catch (err) {
-      alert('Failed to delete category. Please try again.')
-    } finally {
-      setLoading(false)
-    }
+  const handleDeleteCategory = (cat: ResumeCategory) => {
+    setConfirm({
+      open: true,
+      message: `Delete category "${cat.name}"? This cannot be undone.`,
+      onConfirm: async () => {
+        setConfirm(null);
+        setLoading(true);
+        try {
+          await deleteCategory(cat.id);
+        } catch (err) {
+          // Optionally show error toast here
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
   }
 
   if (!user) return null
@@ -353,6 +361,21 @@ export default function ResumesPage() {
                           key={resume.id}
                           resume={resume}
                           color={cat.color}
+                          onRequestDelete={() => setConfirm({
+                            open: true,
+                            message: 'Delete this resume? This cannot be undone.',
+                            onConfirm: async () => {
+                              setConfirm(null);
+                              setLoading(true);
+                              try {
+                                await deleteResume(resume.id);
+                              } catch (err) {
+                                // Optionally show error toast here
+                              } finally {
+                                setLoading(false);
+                              }
+                            }
+                          })}
                         />
                       ))}
                     </div>
@@ -374,6 +397,21 @@ export default function ResumesPage() {
                       key={resume.id}
                       resume={resume}
                       color={category?.color || '#0061FE'}
+                      onRequestDelete={() => setConfirm({
+                        open: true,
+                        message: 'Delete this resume? This cannot be undone.',
+                        onConfirm: async () => {
+                          setConfirm(null);
+                          setLoading(true);
+                          try {
+                            await deleteResume(resume.id);
+                          } catch (err) {
+                            // Optionally show error toast here
+                          } finally {
+                            setLoading(false);
+                          }
+                        }
+                      })}
                     />
                   );
                 })}
@@ -395,12 +433,22 @@ export default function ResumesPage() {
           )}
         </main>
       </div>
+      {confirm && (
+        <ConfirmModal
+          open={confirm.open}
+          message={confirm.message}
+          onConfirm={confirm.onConfirm}
+          onCancel={() => setConfirm(null)}
+          confirmLabel="Delete"
+          confirmColor="bg-red-600 hover:bg-red-700"
+        />
+      )}
     </RequireAuth>
   )
 }
 
 // Helper ResumeCard for preview (simplified, you can expand as needed)
-function ResumeCard({ resume, color }: { resume: Resume, color: string }) {
+function ResumeCard({ resume, color, onRequestDelete }: { resume: Resume, color: string, onRequestDelete: () => void }) {
   const [editing, setEditing] = React.useState(false);
   const [editForm, setEditForm] = React.useState({
     company: resume.company || '',
@@ -428,18 +476,6 @@ function ResumeCard({ resume, color }: { resume: Resume, color: string }) {
       setEditing(false);
     } catch (error) {
       alert('Error saving edit.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!window.confirm('Delete this resume?')) return;
-    setLoading(true);
-    try {
-      await deleteResume(resume.id);
-    } catch (error) {
-      alert('Error deleting resume.');
     } finally {
       setLoading(false);
     }
@@ -511,7 +547,7 @@ function ResumeCard({ resume, color }: { resume: Resume, color: string }) {
             </button>
             <button
               className="flex items-center gap-1 px-2 py-1 text-red-500 hover:text-red-700 text-sm rounded transition"
-              onClick={handleDelete}
+              onClick={onRequestDelete}
             >
               Delete
             </button>

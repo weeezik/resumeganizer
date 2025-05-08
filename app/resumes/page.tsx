@@ -157,25 +157,35 @@ export default function ResumesPage() {
     <RequireAuth>
       <div className="min-h-screen bg-[#F6F5F5] flex">
         {/* Sidebar */}
-        <aside className="w-80 bg-white border-r flex flex-col p-6 gap-4">
+        <aside className="w-80 bg-white rounded-r-lg shadow-md flex flex-col p-6 gap-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-lg font-semibold">Categories</span>
             <button
-              className="text-blue-600 hover:underline text-sm"
+              className="flex items-center gap-1 px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full font-medium text-sm shadow-sm hover:bg-blue-100 transition"
               onClick={() => setShowAll(true)}
-            >View All</button>
+            >
+              View All
+            </button>
           </div>
           <div className="mb-4">
-            <label className="block text-xs text-gray-500 mb-1">Sort by</label>
-            <select
-              className="w-full p-2 border rounded"
-              value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
-            >
-              {SORT_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Sort by</label>
+            <div className="relative">
+              <select
+                className="w-full appearance-none bg-gray-50 border border-gray-300 rounded-lg py-2 pl-3 pr-10 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+              >
+                {SORT_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+              {/* Chevron Icon */}
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
           <div className="flex-1 overflow-y-auto">
             {categories.map(cat => (

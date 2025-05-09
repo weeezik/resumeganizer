@@ -65,18 +65,27 @@ export const processResume = onObjectFinalized(
       }
       const parsedData = JSON.parse(content);
 
-      // Save to Firestore
+      // Get the Firestore document ID from metadata
+      const [metadata] = await file.getMetadata();
+      const resumeDocId = metadata.metadata?.resumeDocId;
+
+      if (!resumeDocId) {
+        throw new Error('No resumeDocId found in file metadata');
+      }
+
+      // Update the existing Firestore document
       await admin.firestore()
         .collection('resumes')
-        .doc(object.name.replace(/[^a-zA-Z0-9]/g, '_'))
-        .set({
-          filePath: object.name,
+        .doc(resumeDocId)
+        .update({
           chunks: {
             workExperience: parsedData.workExperience,
             skills: parsedData.skills,
             summary: parsedData.summary
           },
-          tags: parsedData.tags
+          tags: parsedData.tags,
+          processedAt: admin.firestore.FieldValue.serverTimestamp(),
+          filePath: object.name, // Optional: keep for reference
         });
 
       console.log('Successfully processed resume:', object.name);

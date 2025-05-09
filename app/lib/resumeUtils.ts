@@ -12,32 +12,39 @@ const categoryColors = [
 
 export async function uploadResume(file: File, category: string, userId: string) {
   try {
-    // Create a reference to the file in Firebase Storage
-    const storageRef = ref(storage, `resumes/${category}/${file.name}`)
-    
-    // Upload the file
-    const snapshot = await uploadBytes(storageRef, file)
-    
-    // Get the download URL
-    const downloadURL = await getDownloadURL(snapshot.ref)
-    
-    // Create the resume document in Firestore
+    // Create the resume document in Firestore first
     const resumeData: Omit<Resume, 'id'> = {
       fileName: file.name,
-      fileUrl: downloadURL,
+      fileUrl: '', // Placeholder, will update after upload
       category,
       status: 'not applied',
       userId,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
-    
-    const docRef = await addDoc(collection(db, 'resumes'), resumeData)
-    
+    const docRef = await addDoc(collection(db, 'resumes'), resumeData);
+
+    // Create a reference to the file in Firebase Storage
+    const storageRef = ref(storage, `resumes/${category}/${file.name}`);
+
+    // Upload the file with Firestore doc ID as metadata
+    const snapshot = await uploadBytes(storageRef, file, {
+      customMetadata: {
+        resumeDocId: docRef.id,
+      },
+    });
+
+    // Get the download URL
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    // Update the Firestore document with the fileUrl
+    await updateDoc(docRef, { fileUrl: downloadURL });
+
     return {
       id: docRef.id,
       ...resumeData,
-    }
+      fileUrl: downloadURL,
+    };
   } catch (error) {
     console.error('Error uploading resume:', error)
     throw error
